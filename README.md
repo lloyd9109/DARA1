@@ -3,27 +3,27 @@ php artisan migrate
 
 <h1> Always Check Your .env File </h1>
 
-DB_CONNECTION=mysql // Replace sqlite to mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=test // Check db
-DB_USERNAME=root
-DB_PASSWORD=
+DB_CONNECTION=mysql // Replace sqlite to mysql <br>
+DB_HOST=127.0.0.1 <br>
+DB_PORT=3306 <br>
+DB_DATABASE=test // Check db <br>
+DB_USERNAME=root <br>
+DB_PASSWORD= <br>
 
-<h1> Always Remember RMC </h1>
-R - Routes
- Route::('/', [Controller::class, 'index'])-name('index');
-M - Models
- use APP\MODELS\MODELNAME;
-C - Controller
- Combine all routes and models
-  public function index() {
-      $user = ModelName::where('name' = 'Gayle')-get();
-      return view('landing_page', [
-          'name' => $user,
-      ]);
-
-  Landing Page View:
-      {{ $name ?? '' }}
+<h1> Always Remember RMC </h1> <br>
+R - Routes <br>
+ Route::('/', [Controller::class, 'index'])-name('index'); <br>
+M - Models <br>
+ use APP\MODELS\MODELNAME; <br>
+C - Controller <br>
+ Combine all routes and models <br>
+  public function index() { <br>
+      $user = ModelName::where('name' = 'Gayle')-get(); <br>
+      return view('landing_page', [ <br>
+          'name' => $user, <br>
+      ]); <br>
+ <br>
+  Landing Page View: <br>
+      {{ $name ?? '' }} <br>
 
       

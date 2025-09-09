@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\DB;
 class QueryController extends Controller
 {
     public function landing_page() {
-        return view('welcome');
+        return view('guest.main');
     }
 
-    public function send() {
-        return view('welcome', [
-            'greet' => 'Hello there'
-        ]);
+       public function login_page() {
+        return view('auth.login');
+    }
+       public function recovery_page() {
+        return view('auth.recovery');
     }
 
 }

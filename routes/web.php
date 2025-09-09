@@ -17,9 +17,9 @@ Route::prefix('/')->group(function (){
     Route::get('/', [QueryController::class, 'landing_page']);
     Route::get('/results/', [QueryController::class, 'results_page']);
     Route::get('/document/{id}', [QueryController::class, 'document_page']);
-    Route::get('/go/login', [QueryController::class, 'login_page']);
-    Route::get('/go/recovery', [QueryController::class, 'recovery_page']);
-    Route::get('/go/recovery/verify', [QueryController::class, 'otp_page']);
+    Route::get('/auth/login', [QueryController::class, 'login_page']);
+    Route::get('/auth/recovery', [QueryController::class, 'recovery_page']);
+    Route::get('/auth/recovery/verify', [QueryController::class, 'otp_page']);
 
     Route::post('/send', [QueryController::class, 'send'])->name('send');
     Route::post('/insert-user', [QueryController::class, 'insertUser'])->name('insert.user');

@@ -1,64 +1,54 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RecoveryController;
 
-use App\Http\Controllers\LoginController; // Login Module
-use App\Http\Controllers\QueryController; // Landing Page and Search Query Module
-use App\Http\Controllers\OtpController; // OTP Module
+// ----------------------------------------
+// Root route → show main.blade.php
+// ----------------------------------------
+Route::get('/', function () {
+    return view('guest.main'); // resources/views/guest/main.blade.php
+})->name('landing');
 
-use App\Http\Controllers\Controller; // PDF Reader Module
+// ----------------------------------------
+// Home page (after login)
+// ----------------------------------------
+Route::get('/home', [LoginController::class, 'home'])
+    ->middleware('auth')
+    ->name('home');
 
-use App\Http\Controllers\StudentController; // Student Functions
+// ----------------------------------------
+// Login routes
+// ----------------------------------------
+Route::get('/auth/login', [LoginController::class, 'showLoginForm'])
+    ->name('login.page');
 
-use App\Http\Controllers\TeacherController; // Teacher Functions
+Route::post('/auth/login', [LoginController::class, 'authenticate'])
+    ->name('login');
 
-use App\Http\Controllers\AdminController; // Admin Functions
+Route::post('/logout', [LoginController::class, 'logout'])
+    ->name('logout');
 
-Route::prefix('/')->group(function (){
-    Route::get('/', [QueryController::class, 'landing_page']);
-    Route::get('/results/', [QueryController::class, 'results_page']);
-    Route::get('/document/{id}', [QueryController::class, 'document_page']);
-    Route::get('/auth/login', [QueryController::class, 'login_page']);
-    Route::get('/auth/recovery', [QueryController::class, 'recovery_page']);
-    Route::get('/auth/recovery/verify', [QueryController::class, 'otp_page']);
+// ----------------------------------------
+// Recovery routes
+// ----------------------------------------
+Route::get('/recover', [RecoveryController::class, 'showRecoverForm'])
+    ->name('recover');
 
-    Route::post('/send', [QueryController::class, 'send'])->name('send');
-    Route::post('/insert-user', [QueryController::class, 'insertUser'])->name('insert.user');
+Route::post('/recovery/email', [RecoveryController::class, 'sendRecoveryEmail'])
+    ->name('recovery.email');
+
+// ----------------------------------------
+// Role-based dashboards
+// ----------------------------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/admin', [LoginController::class, 'adminDashboard'])
+        ->name('admin.dashboard');
+
+    Route::get('/teacher', [LoginController::class, 'teacherDashboard'])
+        ->name('teacher.dashboard');
+
+    Route::get('/student', [LoginController::class, 'studentDashboard'])
+        ->name('student.dashboard');
 });
-
-Route::prefix('student')->group(function (){
-    Route::get('/', [StudentController::class, 'dashboard_page']);
-    Route::get('/submission/', [StudentController::class, 'submission_page']);
-    Route::get('/doc-status/', [StudentController::class, 'doc_status_page']);
-    Route::get('/pdf-reader/{id}', [StudentController::class, 'pdf_reader_page']);
-    Route::get('/account-setting/', [StudentController::class, 'account_setting_page']);
-
-    // Route::post(); // Back End
-
-});
-
-Route::prefix('teacher')->group(function (){
-    Route::get('/', [TeacherController::class, 'dashboard_page']);
-    Route::get('/review-document/', [TeacherController::class, 'review_page']);
-    Route::get('/review-document/{id}', [TeacherController::class, 'pdf_reader_page']);
-    Route::get('/account-setting/', [TeacherController::class, 'account_setting_page']);
-
-    // Route::post(); // Back End
-
-});
-
-Route::prefix('admin')->group(function (){
-    Route::get('/', [AdminController::class, 'dashboard_page']);
-    Route::get('/manage-users/', [AdminController::class, 'user_control_page']);
-    Route::get('/storage/', [AdminController::class, 'storage_page']);
-    Route::get('/account-setting/', [AdminController::class, 'account_setting_page']);
-
-    // Route::post(); // Back End
-
-});
-
-Route::prefix('environment')->group(function (){
-    Route::get('/', [Controller::class, 'pdf_reader']);
-
-
-});
-

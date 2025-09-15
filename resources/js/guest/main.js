@@ -23,3 +23,20 @@ checkboxes.forEach(chkbx => {
         label.style.color = checkbox.checked ? 'white' : ''; 
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dropdown = document.querySelector(".user-dropdown");
+    const toggle = document.querySelector(".user-toggle");
+
+    if (dropdown && toggle) {
+        toggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle("active");
+        });
+
+        // Close when clicking outside
+        document.addEventListener("click", () => {
+            dropdown.classList.remove("active");
+        });
+    }
+});

@@ -8,7 +8,7 @@ use App\Http\Controllers\RecoveryController;
 // Root route → show main.blade.php
 // ----------------------------------------
 Route::get('/', function () {
-    return view('guest.main'); // resources/views/guest/main.blade.php
+    return view('guest.main'); 
 })->name('landing');
 
 // ----------------------------------------
@@ -33,11 +33,17 @@ Route::post('/logout', [LoginController::class, 'logout'])
 // ----------------------------------------
 // Recovery routes
 // ----------------------------------------
-Route::get('/recover', [RecoveryController::class, 'showRecoverForm'])
-    ->name('recover');
+Route::get('/auth/recovery', [RecoveryController::class, 'showRecoverForm'])
+    ->name('recovery');
 
-Route::post('/recovery/email', [RecoveryController::class, 'sendRecoveryEmail'])
-    ->name('recovery.email');
+Route::get('/auth/recovery_confirmation', [RecoveryController::class, 'sendRecoveryEmail'])
+    ->name('recovery_confirmation');
+
+Route::get('/auth/verify_otp', [RecoveryController::class, 'VerifyOTP'])
+    ->name('verfity_otp');
+Route::get('/auth/reset_password', [RecoveryController::class, 'ResetPassword'])
+    ->name('reset_password');
+
 
 // ----------------------------------------
 // Role-based dashboards

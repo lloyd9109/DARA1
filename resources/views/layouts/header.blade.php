@@ -6,53 +6,77 @@
 
     <title>DARA Main Page</title>
     @vite(['resources/css/guest/main.css', 'resources/js/guest/main.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <img src="{{ asset('storage/images/DARA.png') }}" alt="DARA Logo">
-            <h2>D A R A</h2>
-        </div>
+<header>
+    <div class="header-left">
+        <img src="{{ asset('storage/images/DARA.png') }}" alt="DARA Logo">
+        <h2>D A R A</h2>
+    </div>
 
-        {{-- ✅ Show only if NOT logged in --}}
+    <!-- Hamburger for mobile -->
+    <button class="hamburger" id="hamburger">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="header-nav" id="headerNav">
         @guest
             <a class="loginbutton" href="{{ url('/auth/login') }}">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-log-in">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                    <polyline points="10 17 15 12 10 7"></polyline>
-                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
-                <h4>&nbsp; Login</h4>
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>Login</span>
             </a>
         @endguest
 
-        {{-- ✅ Show only if logged in --}}
         @auth
-            <div class="user-menu">
-                <span>👋 {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    Logout
-                </a>
+            <div class="user-dropdown">
+                <button class="user-toggle">
+                    <span>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+
+                <ul class="user-menu">
+                    <li>
+                        <a href="{{ url('/profile') }}">
+                            <i class="fa-solid fa-user-graduate"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/settings') }}">
+                            <i class="fa-solid fa-gear"></i> Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
             </div>
         @endauth
-    </header>
+    </nav>
+</header>
 
-    <main>
-        @yield('content')
-    </main>
+<main>
+    @yield('content')
+</main>
 
-    <footer>
-        <p>&copy; {{ date('Y') }} DARA - Digital Academic Repository and Archive</p>
-    </footer>
+<footer>
+    <p>&copy; {{ date('Y') }} DARA - Digital Academic Repository and Archive</p>
+</footer>
+
+<script>
+    // Mobile toggle
+    document.getElementById("hamburger").addEventListener("click", function () {
+        document.getElementById("headerNav").classList.toggle("active");
+    });
+</script>
 
 </body>
 </html>

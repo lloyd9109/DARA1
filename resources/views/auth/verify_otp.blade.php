@@ -9,55 +9,46 @@
                 width="40" height="40" viewBox="0 0 24 24" 
                 fill="none" stroke="currentColor" 
                 stroke-width="2" stroke-linecap="round" 
-                stroke-linejoin="round" class="feather feather-mail">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 
-                    2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 
-                    2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
+                stroke-linejoin="round" class="feather feather-lock">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <h2>Account Recovery</h2>
+            <h2>Verify OTP</h2>
             <p class="instructions">
-                Enter your registered email address.  
-                If it exists, we’ll send you recovery instructions.
+                Enter the 6-digit OTP sent to your email address.  
+                This helps us verify your identity.
             </p>
         </div>
 
-        {{-- Error message --}}
-        @error('email')
-            <div class="message error">{{ $message }}</div>
-        @enderror
-
-        {{-- Recovery Form --}}
-        <form action="{{ url('auth/recoveryemail') }}" method="POST" class="recovery-form">
+        {{-- OTP Form --}}
+        <form action="{{ url('auth/verify-otp') }}" method="POST" class="recovery-form">
             @csrf
 
-            <div class="form-group">
-                <label for="email" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="e.g. johndoe@email.com" 
-                    required
-                >
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-box" required>
+                <input type="text" maxlength="1" class="otp-box" required>
+                <input type="text" maxlength="1" class="otp-box" required>
+                <input type="text" maxlength="1" class="otp-box" required>
+                <input type="text" maxlength="1" class="otp-box" required>
+                <input type="text" maxlength="1" class="otp-box" required>
             </div>
 
-            <button type="submit" class="submit-btn">Request Recovery</button>
+            <button type="submit" class="submit-btn">Verify</button>
         </form>
 
+        <p class="resend">
+            Didn’t receive the code? <a href="#">Resend OTP</a>
+        </p>
     </div>
 </div>
 
 {{-- Styles --}}
 <style>
-
-    .recovery-wrapper{
+    .recovery-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
-        height: 100%;
         min-height: 80vh;
     }
     .recovery-container {
@@ -89,36 +80,29 @@
         margin-bottom: 25px;
     }
 
-    .form-group {
-        text-align: left;
-        margin-bottom: 20px;
+    .otp-inputs {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
     }
 
-    .form-label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: #0c1c43;
-    }
-
-    .form-input {
-        width: 100%;
-        max-width: 100%; 
-        box-sizing: border-box; 
-        padding: 12px 14px;
+    .otp-box {
+        width: 45px;
+        height: 50px;
+        font-size: 20px;
+        text-align: center;
         border: 1.5px solid #ccc;
         border-radius: 8px;
-        font-size: 15px;
         background: #fafafa;
         transition: all 0.3s ease;
     }
 
-    .form-input:focus {
+    .otp-box:focus {
         border-color: #0c1c43;
         outline: none;
+        background: #fff;
     }
 
-    
     .submit-btn {
         width: 100%;
         padding: 14px;
@@ -136,20 +120,22 @@
         background-color: #142b66;
     }
 
-    .message.error {
-        background: #ffe5e5;
-        color: #d9534f;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 15px;
+    .resend {
+        margin-top: 15px;
         font-size: 14px;
+    }
+    .resend a {
+        color: #0c1c43;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .resend a:hover {
+        text-decoration: underline;
     }
 
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-
-    
 </style>
 @endsection

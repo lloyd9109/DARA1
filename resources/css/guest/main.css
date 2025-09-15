@@ -13,15 +13,31 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 200px;
+    padding: 10px 40px; /* smaller default */
     background-color: #0c1c43;
     color: white;
+    z-index: 1000;
 }
-
 .header-left {
     display: flex;
     align-items: center;
     gap: 15px;
+}
+/* Nav for desktop */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Hamburger hidden on desktop */
+.hamburger {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
 }
 
 .header-left img {
@@ -72,14 +88,6 @@ footer {
     background-color: #0c1c43;
     color: white;
     text-align: center;
-}
-
-.contents {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
 }
 
 .brand {
@@ -183,4 +191,120 @@ footer {
     font-size: 14px;
     font-weight: bold;
     color: #0c1c43;
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    font-weight: 500;
+}
+
+.user-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    background: #ddd;
+}
+
+/* Dropdown Menu */
+.user-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    min-width: 100px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.25s ease;
+}
+
+.user-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #333;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.user-menu li a i {
+    color: #0c1c43; /* academic theme blue */
+    font-size: 16px;
+}
+
+.user-menu li a:hover {
+    background: #f0f4ff;
+    color: #0c1c43;
+}
+
+/* Active Dropdown */
+.user-dropdown.active .user-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .user-toggle span {
+        display: none;
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 20px;
+    }
+
+    .header-nav {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: #0c1c43;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 200px;
+        display: none;
+        padding: 15px;
+    }
+
+    .header-nav.active {
+        display: flex;
+    }
+
+    .hamburger {
+        display: block;
+    }
 }

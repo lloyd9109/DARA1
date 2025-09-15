@@ -1,4 +1,6 @@
 *
-!private/
-!public/
+!app/
+!app/public/
+!app/public/images/
+!app/public/images/*
 !.gitignore

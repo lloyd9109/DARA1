@@ -3,23 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class RecoveryController extends Controller
 {
-    public function sendRecoveryEmail(Request $request)
+    // 👉 Show the recovery form page
+    public function showRecoverForm()
+    {
+        return view('guest.recovery'); // <-- path to your Blade file
+    }
+
+    // 👉 Handle the form and send email
+    public function sendRecovery(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $email = $request->email;
+        $token = bin2hex(random_bytes(16)); // sample token
 
-        // Example: send recovery email (optional)
-        // Mail::to($user->email)->send(new RecoveryMail($user));
+        $mail = new PHPMailer(true);
 
-        // For now, just return a success message
-        return back()->with('success', 'Recovery instructions have been sent to your email!');
+        try {
+            $mail->isSMTP();
+            $mail->Host = "smtp.gmail.com";
+            $mail->SMTPAuth = true;
+            $mail->Username = "gambaza66@gmail.com";
+            $mail->Password = "lryg hftu isgu gewb"; // Gmail app password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom("gambaza66@gmail.com", "DARA");
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Password Recovery';
+            $mail->Body    = "
+                <h3>Password Recovery Request</h3>
+                <p>Click the link below to reset your password:</p>
+                <a href='" . url('/reset-password?token=' . $token) . "'>Reset Password</a>
+            ";
+
+            $mail->send();
+
+            return back()->with('success', 'Recovery email sent! Please check your inbox.');
+        } catch (Exception $e) {
+            return back()->withErrors(['email' => "Mailer Error: {$mail->ErrorInfo}"]);
+        }
     }
 }

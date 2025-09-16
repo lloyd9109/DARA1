@@ -31,19 +31,19 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'usn_login' => 'Invalid USN or password.',
+            'usn_login' => 'Invalid USN or Password..',
         ])->onlyInput('usn_login');
     }
 
     // Logout user
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            public function logout(Request $request)
+        {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return redirect('/auth/login');
-    }
+            return redirect()->route('landing');
+        }
 
     // Home page
     public function home()

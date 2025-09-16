@@ -27,7 +27,6 @@
                            placeholder="Username">
                 </div>
                 @error('usn_login')
-                    <div class="error-message">{{ $message }}</div>
                 @enderror
 
                 {{-- Password field --}}

@@ -26,3 +26,4 @@ checkboxes.forEach(chkbx => {
 });
 // resources/js/guest/login.js
 console.log("Login JS loaded");
+

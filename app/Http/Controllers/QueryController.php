@@ -16,8 +16,5 @@ class QueryController extends Controller
        public function login_page() {
         return view('auth.login');
     }
-       public function recovery_page() {
-        return view('auth.recovery');
-    }
 
 }

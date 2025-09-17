@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="contents">
-    
+
     {{-- Brand section --}}
     <div class="brand">
         <img src="{{ asset('storage/images/DARA.png') }}" alt="DARA Logo" class="logo">
@@ -14,8 +14,7 @@
     </div>
 
     {{-- Search form --}}
-    <form id="searchForm" action="/results" method="get">
-        @csrf
+    <form id="searchForm" action="{{ url('/results') }}" method="get">
         <div class="search">
             <input id="search" name="search" type="text" placeholder="Search by Title or Keywords...">
             <button type="submit">

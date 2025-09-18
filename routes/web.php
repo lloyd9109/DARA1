@@ -36,7 +36,6 @@ Route::middleware(['guest', 'preventBackHistory'])->group(function () {
 
     // OTP Resend
     Route::post('/auth/resend-otp', [RecoveryController::class, 'resendOtp'])->name('password.otp.resend');
-
 });
 
 // ----------------------------------------
@@ -44,13 +43,15 @@ Route::middleware(['guest', 'preventBackHistory'])->group(function () {
 // ----------------------------------------
 Route::middleware(['auth', 'preventBackHistory'])->group(function () {
 
+    // ✅ Student Dashboard (Home Page)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // Logout
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // ✅ Admin Dashboard
+    Route::get('/admin/dashboard', [LoginController::class, 'adminDashboard'])->name('admin.dashboard');
 
-    // Role-based dashboards
-    Route::get('/admin', [LoginController::class, 'adminDashboard'])->name('admin.dashboard');
-    Route::get('/teacher', [LoginController::class, 'teacherDashboard'])->name('teacher.dashboard');
-    Route::get('/student', [LoginController::class, 'studentDashboard'])->name('student.dashboard');
+    // ✅ Teacher Dashboard
+    Route::get('/teacher/dashboard', [LoginController::class, 'teacherDashboard'])->name('teacher.dashboard');
+
+    // ✅ Logout
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

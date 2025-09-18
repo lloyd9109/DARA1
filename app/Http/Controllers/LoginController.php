@@ -8,16 +8,15 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    // Show login page
+    // ✅ Show login page
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Authenticate user
+    // ✅ Authenticate user
     public function authenticate(Request $request)
     {
-        // ✅ Validate input (including role selection)
         $request->validate([
             'usn_login' => 'required',
             'password_hash_login' => 'required',
@@ -29,25 +28,23 @@ class LoginController extends Controller
             'role.in' => 'Invalid role selected.',
         ]);
 
-        // ✅ Check if user exists
+        // 🔍 Check if user exists
         $user = User::where('usn', $request->usn_login)->first();
 
         if (!$user) {
-            // Username does not exist → only username error
             return back()->withErrors([
                 'usn_login' => 'Incorrect username.',
             ])->onlyInput('usn_login');
         }
 
-        // ✅ Verify password
+        // 🔍 Verify password
         if (!password_verify($request->password_hash_login, $user->password_hash)) {
-            // Username exists but wrong password → only password error
             return back()->withErrors([
                 'password_hash_login' => 'Incorrect password.',
-            ])->onlyInput('usn_login'); // keep username filled in
+            ])->onlyInput('usn_login');
         }
 
-        // ✅ Role check (only runs if username + password are correct)
+        // 🔍 Role check
         if ($user->role !== $request->role) {
             return back()->withErrors([
                 'role' => 'Selected role does not match your account.',
@@ -58,20 +55,41 @@ class LoginController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home');
+        // ✅ Redirect by role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'student') {
+            return redirect()->route('home');
+        } elseif ($user->role === 'teacher') {
+            return redirect()->route('teacher.dashboard');
+        }
+
+        return redirect()->route('home'); // fallback
     }
 
-    // Logout user
+    // ✅ Logout user
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login.page'); // back to login page
     }
 
-    // Home page
+    // ✅ Admin Dashboard
+    public function adminDashboard()
+    {
+        return view('admindashboard'); // resources/views/admindashboard.blade.php
+    }
+
+    // ✅ Teacher Dashboard
+    public function teacherDashboard()
+    {
+        return view('teacherdashboard'); // resources/views/teacherdashboard.blade.php
+    }
+
+    // ✅ Student Dashboard (Home)
     public function home()
     {
         return view('home'); // resources/views/home.blade.php

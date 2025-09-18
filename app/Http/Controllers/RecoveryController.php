@@ -15,7 +15,7 @@ class RecoveryController extends Controller
      */
     public function showRecoverForm()
     {
-        return view('guest.forgot'); // ✅ match your Blade filename
+        return view('guest.forgot'); // forgot.blade.php
     }
 
     /**
@@ -41,9 +41,12 @@ class RecoveryController extends Controller
             return back()->with('error', 'Failed to send OTP. Please try again.');
         }
 
+        // Save email in session for next steps
+        $request->session()->put('recovery_email', $email);
+
         return redirect()
             ->route('password.verify.form')
-            ->with(['email' => $email, 'success' => 'OTP sent to your email.']);
+            ->with('success', 'OTP sent to your email.');
     }
 
     /**
@@ -52,7 +55,7 @@ class RecoveryController extends Controller
     public function showVerifyOtpForm(Request $request)
     {
         return view('guest.verify_otp', [
-            'email' => session('email') // ✅ pass email from session
+            'email' => $request->session()->get('recovery_email')
         ]);
     }
 
@@ -62,12 +65,17 @@ class RecoveryController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'otp'   => 'required|digits:6'
+            'otp' => 'required|digits:6'
         ]);
 
+        $email = $request->session()->get('recovery_email');
+        if (! $email) {
+            return redirect()->route('password.recover')
+                ->withErrors(['email' => 'Session expired. Please request a new recovery code.']);
+        }
+
         $record = DB::table('password_resets')
-            ->where('email', $request->email)
+            ->where('email', $email)
             ->where('token', $request->otp)
             ->first();
 
@@ -75,23 +83,24 @@ class RecoveryController extends Controller
             return back()->withErrors(['otp' => 'Invalid OTP']);
         }
 
-        // ✅ Check expiry (15 minutes)
+        // Check expiry (15 minutes)
         if (now()->diffInMinutes($record->created_at) > 15) {
             return back()->withErrors(['otp' => 'OTP expired. Please request again.']);
         }
 
+        // OTP is correct → proceed to reset password
         return redirect()
             ->route('password.reset.form')
-            ->with('email', $request->email);
+            ->with('success', 'OTP verified. You may now reset your password.');
     }
 
     /**
      * Step 3: Show reset password form
      */
-    public function showResetForm()
+    public function showResetForm(Request $request)
     {
         return view('guest.reset_password', [
-            'email' => session('email')
+            'email' => $request->session()->get('recovery_email')
         ]);
     }
 
@@ -101,23 +110,58 @@ class RecoveryController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
             'password' => 'required|min:6|confirmed'
         ]);
 
-        // ✅ FIX: use password_hash column
+        $email = $request->session()->get('recovery_email');
+        if (! $email) {
+            return redirect()->route('password.recover')
+                ->withErrors(['email' => 'Session expired. Please start over.']);
+        }
+
+        // Update user password (use password_hash column)
         DB::table('users')
-            ->where('email', $request->email)
+            ->where('email', $email)
             ->update(['password_hash' => Hash::make($request->password)]);
 
         // Delete OTP after use
         DB::table('password_resets')
-            ->where('email', $request->email)
+            ->where('email', $email)
             ->delete();
+
+        // Clear session
+        $request->session()->forget('recovery_email');
 
         return redirect()
             ->route('login.page')
             ->with('success', 'Password reset successful. Please login.');
+    }
+
+    /**
+     * Resend OTP
+     */
+    public function resendOtp(Request $request)
+    {
+        $email = $request->session()->get('recovery_email');
+
+        if (! $email) {
+            return redirect()->route('password.recover')
+                ->withErrors(['email' => 'Session expired. Please request a new recovery code.']);
+        }
+
+        // Generate new OTP
+        $otp = rand(100000, 999999);
+
+        // Store OTP in DB
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $email],
+            ['token' => $otp, 'created_at' => now()]
+        );
+
+        // Send OTP
+        $this->sendOtpMail($email, $otp);
+
+        return back()->with('status', 'A new OTP has been sent to your email.');
     }
 
     /**
@@ -146,7 +190,6 @@ class RecoveryController extends Controller
             $mail->send();
             return true;
         } catch (Exception $e) {
-            // Optional: log error
             return false;
         }
     }

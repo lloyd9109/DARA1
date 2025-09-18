@@ -33,6 +33,10 @@ Route::middleware(['guest', 'preventBackHistory'])->group(function () {
     // 3. Reset Password
     Route::get('/auth/reset-password', [RecoveryController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/auth/reset-password', [RecoveryController::class, 'resetPassword'])->name('password.reset');
+
+    // OTP Resend
+    Route::post('/auth/resend-otp', [RecoveryController::class, 'resendOtp'])->name('password.otp.resend');
+
 });
 
 // ----------------------------------------
